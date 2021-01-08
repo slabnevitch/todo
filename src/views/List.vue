@@ -75,8 +75,15 @@
 
             </template>
         </b-modal>
+        <p>{{$store.getters.getAuthentificated}}</p>
 
-        <b-table 
+        <b-alert show v-if="items.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
+            <b-link ещ="/create">создать</b-link> задачу.
+
+        </b-alert>
+
+
+        <b-table v-else
             stacked="lg"
             :items="items"
             :fields="fields" 
