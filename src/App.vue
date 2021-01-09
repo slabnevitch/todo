@@ -1,20 +1,28 @@
 <template>
   <div id="app">
-    <Navbar></Navbar>
+    <Navbar :userState="getUserState"></Navbar>
     <b-container>
       <router-view/>
     </b-container>
-    <SignModal></SignModal>
+    <SignUpModal></SignUpModal>
+    <SignInModal></SignInModal>
   </div>
 </template>
 
 <script>
   import Navbar from '@/components/Navbar'
-  import SignModal from '@/components/SignModal'
+  import SignUpModal from '@/components/SignUpModal'
+  import SignInModal from '@/components/SignInModal'
   export default {
     components: {
       Navbar,
-      SignModal
+      SignUpModal,
+      SignInModal,
+    },
+    computed: {
+      getUserState(){
+        return this.$store.getters.getAuthentificated
+      }
     }
   }
 </script>

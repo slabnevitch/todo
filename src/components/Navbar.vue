@@ -16,10 +16,21 @@
     
     </b-collapse> -->
     <b-navbar-nav class="ml-auto">
-        <b-nav-item v-b-modal.modalSignIn>Войти</b-nav-item>
-        <b-nav-item>Выйти</b-nav-item>
-        <b-nav-item>Зарегистрироваться</b-nav-item>
-      </b-navbar-nav>
+      <b-nav-item v-b-modal.modalSignIn>Войти</b-nav-item>
+      <b-nav-item v-b-modal.modalSignUp>Зарегистрироваться</b-nav-item>
+    </b-navbar-nav>
+
+    <b-navbar-nav>
+      <b-nav-item-dropdown right>
+        <!-- Using 'button-content' slot -->
+        <template #button-content>
+          <b-icon-person-fill></b-icon-person-fill>
+          <span class="ml-1">name</span>
+        </template>
+        <b-dropdown-item @click="signOutConfirm">Выйти</b-dropdown-item>
+      </b-nav-item-dropdown>
+      
+    </b-navbar-nav>
   </b-navbar>
   
 
@@ -27,9 +38,26 @@
 
 <script>
 export default {
-  name: 'Navba',
+  name: 'Navbar',
   props: {
-    msg: String
+    userState: Boolean
+  },
+  methods: {
+    signOutConfirm(id){
+        this.$bvModal.msgBoxConfirm('Действительно хотите выйти?', {
+            okTitle: 'Да',
+            cancelTitle: 'Отмена',
+        })
+          .then(value => {
+            console.log(value)
+              if(value){
+   
+              }
+          })
+          .catch(err => {
+
+          })
+    },
   }
 }
 </script>

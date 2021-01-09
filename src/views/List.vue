@@ -231,7 +231,10 @@
                 this.makeToast(title, 'remove')
             },
             removeConfirm(id){
-                this.$bvModal.msgBoxConfirm('Задача в настоящее время активна. Удалить все равно?')
+                this.$bvModal.msgBoxConfirm('Действительно хотите удалить задачу?', {
+                    okTitle: 'Да',
+                    cancelTitle: 'Отмена',
+                })
                   .then(value => {
                     console.log(value)
                       if(value){
