@@ -4,15 +4,17 @@
     <b-container>
       <router-view/>
     </b-container>
-
+    <SignModal></SignModal>
   </div>
 </template>
 
 <script>
   import Navbar from '@/components/Navbar'
+  import SignModal from '@/components/SignModal'
   export default {
     components: {
-      Navbar
+      Navbar,
+      SignModal
     }
   }
 </script>

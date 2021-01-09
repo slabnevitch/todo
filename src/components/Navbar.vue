@@ -15,7 +15,14 @@
       </b-navbar-nav>
     
     </b-collapse> -->
+    <b-navbar-nav class="ml-auto">
+        <b-nav-item v-b-modal.modalSignIn>Войти</b-nav-item>
+        <b-nav-item>Выйти</b-nav-item>
+        <b-nav-item>Зарегистрироваться</b-nav-item>
+      </b-navbar-nav>
   </b-navbar>
+  
+
 </template>
 
 <script>
