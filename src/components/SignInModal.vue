@@ -21,6 +21,7 @@
       <b-form-group id="input-group-3" label="Пароль:" label-for="password">
         <b-form-input
           id="password"
+          type="password"
           v-model="form.password"
           :state="passState"
         ></b-form-input>
@@ -29,7 +30,17 @@
 		    </b-form-invalid-feedback>
       </b-form-group>
 
-      <b-button type="submit" size="sm" variant="success">Войти</b-button>
+      <b-overlay
+        :show="busy"
+        rounded
+        opacity="0.6"
+        spinner-small
+        spinner-variant="primary"
+        class="d-inline-block"
+      >
+        <b-button type="submit" size="sm" variant="success">Войти</b-button>
+      </b-overlay>
+
       <b-button class="ml-2" size="sm" variant="secondary" @click="cancelModal">Отмена</b-button>
 
     </b-form>
@@ -44,10 +55,11 @@
           email: '',
           password: '',
         },
+        busy: false
 			}
 		},
 		methods: {
-      onSubmit(event) {
+      async onSubmit(event) {
         event.preventDefault()
         console.log('submit')
 
@@ -55,12 +67,19 @@
       		email: this.form.email,
       		password: this.form.password
       	}
-        if(this.passState && this.emailState){
-        
-        }
-        console.log(user)
 
-        // this.$bvModal.hide('modalSignIn')
+        if(this.passState && this.emailState){
+          this.busy = true
+          await this.$store.dispatch('login', user)
+        }
+
+        console.log(user)
+        this.busy = false
+
+        this.form.email = ''
+        this.form.password = ''
+        
+        this.$bvModal.hide('modalSignIn')
       },
       validateEmail(email) {
 			    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

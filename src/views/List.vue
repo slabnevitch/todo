@@ -75,7 +75,7 @@
 
             </template>
         </b-modal>
-        <p>{{$store.getters.getAuthentificated}}</p>
+        <p>{{$store.getters.getUser.isAuthorized}}</p>
 
         <b-alert show v-if="items.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
             <b-link ещ="/create">создать</b-link> задачу.

@@ -15,17 +15,17 @@
       </b-navbar-nav>
     
     </b-collapse> -->
-    <b-navbar-nav class="ml-auto">
+    <b-navbar-nav v-if="!getUserInfo.isAuthorized" class="ml-auto">
       <b-nav-item v-b-modal.modalSignIn>Войти</b-nav-item>
       <b-nav-item v-b-modal.modalSignUp>Зарегистрироваться</b-nav-item>
     </b-navbar-nav>
 
-    <b-navbar-nav>
+    <b-navbar-nav v-else class="ml-auto">
       <b-nav-item-dropdown right>
         <!-- Using 'button-content' slot -->
         <template #button-content>
           <b-icon-person-fill></b-icon-person-fill>
-          <span class="ml-1">name</span>
+          <span class="ml-1">{{getUserInfo.name}}</span>
         </template>
         <b-dropdown-item @click="signOutConfirm">Выйти</b-dropdown-item>
       </b-nav-item-dropdown>
@@ -40,24 +40,43 @@
 export default {
   name: 'Navbar',
   props: {
-    userState: Boolean
+    username: String
   },
   methods: {
-    signOutConfirm(id){
-        this.$bvModal.msgBoxConfirm('Действительно хотите выйти?', {
-            okTitle: 'Да',
-            cancelTitle: 'Отмена',
-        })
-          .then(value => {
-            console.log(value)
-              if(value){
-   
-              }
-          })
-          .catch(err => {
+    async signOutConfirm(id){
+      try{
+         const modalConfirm = await this.$bvModal.msgBoxConfirm('Действительно хотите выйти?', {
+          okTitle: 'Да',
+          cancelTitle: 'Отмена',
+         });
+       
+         console.log(modalConfirm)
+         
+         if(modalConfirm){
+           await this.$store.dispatch('logout')
+          }
+      }catch(e){
+        
+      }
+        // this.$bvModal.msgBoxConfirm('Действительно хотите выйти?', {
+        //     okTitle: 'Да',
+        //     cancelTitle: 'Отмена',
+        // })
+        //   .then(value => {
+        //     console.log(value)
+        //       if(value){
+        //         await this.$store.dispatch('logout')
+        //       }
+        //   })
+        //   .catch(err => {
 
-          })
-    },
+        //   })
+    }
+  },
+  computed: {
+    getUserInfo(){
+      return this.$store.getters.getUser
+    }
   }
 }
 </script>

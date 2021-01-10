@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navbar :userState="getUserState"></Navbar>
+    <Navbar :userState="getUserState.name"></Navbar>
     <b-container>
       <router-view/>
     </b-container>
@@ -21,7 +21,7 @@
     },
     computed: {
       getUserState(){
-        return this.$store.getters.getAuthentificated
+        return this.$store.getters.getUser
       }
     }
   }

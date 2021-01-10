@@ -6,7 +6,8 @@ export default{
   state: {
     user: {
       isAuthorized: false,
-      uid: null
+      uid: null,
+      name: ''
     }
   },
   mutations: {
@@ -17,26 +18,38 @@ export default{
     unsetUser(state){
       state.user.isAuthorized = false
       state.user.uid = null
+    },
+    setUsername(state, name){
+      state.user.name = name
+    },
+    clearUser(state){
+      state.user.name = null
+      state.user.uid = null
     }
   },
   actions: {
-    userStateChange({commit}, user){
+    userStateChange({commit, dispatch}, user){
       if(user){
         commit('setUser', user.uid)
+        dispatch('fetchName')
       }else{
         commit('unsetUser')
       }
     },
-    async login({commit}, {email, password}){
+    async login({commit, dispatch}, {email, password}){
       console.log('async login')
       try{
         await firebase.auth().signInWithEmailAndPassword(email, password)
-
+        // dispatch('fetchName')
       } catch(e){
         // commit('setError', e) //commit - Запуск мутации.
         throw e //пробрасываем ошибку дальше из промиса
         // console.error(e)
       }
+    },
+    async logout({commit}){
+      await firebase.auth().signOut()
+      commit('clearUser')
     },
     async register({dispatch, commit}, {email,  password, name}){
       console.log(email,  password, name)
@@ -49,6 +62,7 @@ export default{
           tasks: {}
         })//`users/${uid}/info` - путь до базы данных, создаваемой для пользователя 
           console.log('try in register')
+          // dispatch('fetchName')
         } catch(e){
           console.log('catch in register')
           // commit('setError', e) //commit - Запуск мутации.
@@ -57,14 +71,25 @@ export default{
     },
     getUserId(){
       const user = firebase.auth().currentUser
-      // console.log('userId', user.uid)
+      console.log('userId', user.uid)
       return user ? user.uid : null
     },
+    async fetchName(ctx){
+      try{
+        const uid = await ctx.dispatch('getUserId')
+        const info = (await firebase.database().ref(`/users/${uid}/name`).once('value')).val()
+        ctx.commit('setUsername', info)
+        console.log(info)
+
+      }catch(e){
+        console.log(e)
+      }
+    }
   },
 
   getters: {
-  	getAuthentificated(state){
-      return state.user.isAuthorized
+  	getUser(state){
+      return state.user
     }
   }
 }
