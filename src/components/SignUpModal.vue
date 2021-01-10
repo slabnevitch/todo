@@ -40,8 +40,17 @@
 		    </b-form-invalid-feedback>
       </b-form-group>
 
-
-      <b-button type="submit" size="sm" variant="success">Зарегистрироваться</b-button>
+      <b-overlay
+        :show="busy"
+        rounded
+        opacity="0.6"
+        spinner-small
+        spinner-variant="primary"
+        class="d-inline-block"
+      >
+        <b-button type="submit" size="sm" variant="success">Зарегистрироваться</b-button>
+      </b-overlay>
+      
       <b-button class="ml-2" size="sm" variant="secondary" @click="cancelModal">Отмена</b-button>
 
     </b-form>
@@ -57,10 +66,11 @@
           name: '',
           password: '',
         },
+        busy: false,
 			}
 		},
 		methods: {
-      onSubmit(event) {
+      async onSubmit(event) {
         event.preventDefault()
         console.log('submit')
 
@@ -70,11 +80,16 @@
       		name: this.form.name
       	}
         if(this.passState && this.emailState && this.nameState){
-        
+          this. busy = true
+          await this.$store.dispatch('register', user)
         }
         console.log(user)
+        this. busy = false
+        this.$bvModal.hide('modalSignUp')
 
-        // this.$bvModal.hide('modalSignUp')
+        this.form.email= ''
+        this.form.password= ''
+        this.form.name= ''
       },
       validateEmail(email) {
 			    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

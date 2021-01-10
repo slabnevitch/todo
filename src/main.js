@@ -19,13 +19,14 @@ Vue.filter('datefilter', datefilter)
 
 Vue.config.productionTip = false
 
-var firebaseConfig = {
+ var firebaseConfig = {
     apiKey: "AIzaSyB1zA9cNcHokM66WMA80K3VA4iCTpqoTQo",
     authDomain: "todo-36ee3.firebaseapp.com",
+    databaseURL: "https://todo-36ee3-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "todo-36ee3",
     storageBucket: "todo-36ee3.appspot.com",
     messagingSenderId: "985823636813",
-    appId: "1:985823636813:web:e55aba5217d6370ca39b04"
+    appId: "1:985823636813:web:d03ecaf74563fdeda39b04"
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
