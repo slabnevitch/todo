@@ -32,6 +32,7 @@ export default{
       if(user){
         commit('setUser', user.uid)
         dispatch('fetchName')
+        dispatch('getTasks')
       }else{
         commit('unsetUser')
       }
@@ -71,7 +72,7 @@ export default{
     },
     getUserId(){
       const user = firebase.auth().currentUser
-      console.log('userId', user.uid)
+      // console.log('userId', user.uid)
       return user ? user.uid : null
     },
     async fetchName(ctx){

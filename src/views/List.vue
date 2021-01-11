@@ -1,5 +1,6 @@
 <template>
       <b-row>
+        <!-- <pre>{{tasks}}</pre> -->
         <b-col class="mt-5" v-if="!getUserState.isAuthorized" cols="12">
             <b-alert show variant="warning">Чтобы создавать и просматривать задачи, 
                 пожалуйста, <b-link v-b-modal.modalSignIn>войдите</b-link> или <b-link v-b-modal.modalSignUp>зарегистрируйтесь.</b-link>
@@ -81,6 +82,7 @@
                     </template>
                 </b-modal>
                 <p>{{getUserState.isAuthorized}}</p>
+                
 
                 <b-alert show v-if="items.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
                     <b-link to="/create">создать</b-link> задачу.
@@ -134,6 +136,10 @@
                         </template>
 
             	</b-table>
+
+                <b-overlay :show="!tasks.length > 0 && getUserState.isAuthorized" rounded="sm">
+
+                </b-overlay>
                
                 <b-pagination
                     v-model="currentPage"
@@ -164,6 +170,7 @@
                 taskStatusMessages,
                 sortBy: 'Окончание',
                 sortDesc: false,
+                // tasks: [],
 				fields: [
                     // {
                     //     key:'№',
@@ -296,6 +303,15 @@
             getUserState(){
                 return this.$store.getters.getUser
             }
+        },
+        async created(){
+            // this.tasks = []
+            const fetchedTasks = await this.$store.dispatch('getTasks')
+            // console.log(fetchedTasks)
+            // this.tasks = fetchedTasks
+        },
+        destroyed(){
+            console.log('list destroyed')
         },
         mixins: [toastsMixin]
 	}

@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 
 export default{
   state: {
-  	tasks: JSON.parse(localStorage.getItem('tasks')) || []
+  	tasks: []
   },
   mutations: {
   	createTask(state, task){
@@ -10,29 +10,19 @@ export default{
     //   localStorage.setItem('tasks', JSON.stringify(state.tasks))
 
   	},
-    editTask(state, newTask){
-      // const newTasksArray = state.tasks.concat()
-      // let editableTaskIndex = newTasksArray.findIndex(t => t.id === newTask.id)
-
-      // newTasksArray[editableTaskIndex] = newTask
-      // console.log(editableTaskIndex)
-      // state.tasks = newTasksArray
-      // localStorage.setItem('tasks', JSON.stringify(newTasksArray))
-      let editableTaskIndex = state.tasks.findIndex(t => t.id === newTask.id)
-
-      state.tasks[editableTaskIndex] = newTask
-      // console.log(editableTask)
-      
-      localStorage.setItem('tasks', JSON.stringify(state.tasks))
+    setTasks(state, tasks){
+      state.tasks = tasks
     },
-    removeTask(state, removedTaskId){
-      state.tasks.splice(state.tasks.findIndex(t => t.id === removedTaskId), 1)
-      localStorage.setItem('tasks', JSON.stringify(state.tasks))
+    editTask(state, newTask){
+
     }
   },
   actions: {
   	async createTask({commit, dispatch}, task){
       try{
+        // task.tags ? task.tags = {...task.tags} : {}
+          console.log(task.tags)
+        
         const uid = await dispatch('getUserId')
           const pushedTask = await firebase.database().ref(`users/${uid}/tasks`).push(task) //если в базе данных нет поля categories оно будет создано
           //firebase вернет категорию, в нем будет поле key
@@ -46,12 +36,45 @@ export default{
       }
       // commit('createTask', task)
   	},
-    editTask({commit}, payload){
-      commit('editTask', payload)
+    async getTasks(ctx){
+      try{
+        const uid = await ctx.dispatch('getUserId')
+        console.log('getTasks ' + uid)
+        const tasks = (await firebase.database().ref(`/users/${uid}/tasks`).once('value')).val() || {}
+        
+        ctx.commit('setTasks', Object.keys(tasks).map((key) => ({...tasks[key], id: key})))
+        // console.log(Object.keys(tasks).map((key) => ({...tasks[key], id: key})))
+        // return Object.keys(tasks).map((key) => ({...tasks[key], id: key}))
+
+      }catch(e){
+         console.log(e)
+        // ctx.commit('setError', e)
+        throw e
+      }
     },
-    removeTask({commit}, payload){
-      console.log(payload)
-      commit('removeTask', payload)
+    async editTask({dispatch}, payload){
+
+      try{
+          const uid = await dispatch('getUserId')
+          const updatedTask = await firebase.database().ref(`users/${uid}/tasks`).child(payload.id).update(payload) //обновление полей в категории с переданным id
+          dispatch('getTasks')
+      }catch(e){
+        console.error(e)
+        // ctx.commit('setError', e)
+        throw e
+      }
+    },
+    async removeTask({dispatch}, payload){
+      try{
+         const uid = await dispatch('getUserId')
+          const removedTask = await firebase.database().ref(`users/${uid}/tasks`).child(payload).remove()
+          console.log(removedTask)
+          dispatch('getTasks')
+
+      }catch(e){
+        console.log(e)
+      }
+      
     }
   },
 

@@ -40,7 +40,11 @@
 			  		<b-form-datepicker id="example-datepicker" :date-disabled-fn="dateDisabled" v-model="deadline" class="mb-2" placeholder="Дата не выбрана"></b-form-datepicker>
 			  	</div>
 	  			<b-button :disabled="isCompleted" type="button" variant="danger" class="mr-2" @click.prevent="complete">Завершит задачу</b-button>
-	  			<b-button v-show="!isCompleted && !isEdited" type="submit" variant="success">Сохранить изменения</b-button>
+	  			
+	  			<Loader :busy="busy">
+	  				<b-button v-show="!isCompleted && !isEdited" type="submit" variant="success">Сохранить изменения</b-button>
+	  			</Loader>
+	  			
 	  			<b-button @click.prevent="$router.push('/')" class="ml-2">Отмена</b-button>
 	  		</form>
 	    </div> <!-- col-6 -->
@@ -52,6 +56,7 @@
 // import HelloWorld from '@/components/Navbar.vue'
 import  taskStatusMessages from '@/utils/status'
 import toastsMixin from '@/mixins/toasts'
+import Loader from '@/components/Loader'
 
 export default {
 	name: 'Task',
@@ -63,11 +68,15 @@ export default {
 			deadline: '',
 			status: '',
 			taskStatusMessages,
-			id: ''
+			id: '',
+			busy: false
 		}
 	},
+	components: {
+		Loader
+	},
 	methods: {
-		submit(){
+		async submit(){
 			let task = {
 				title: this.title,
 				description: this.description,
@@ -76,8 +85,12 @@ export default {
 				tags: this.tags,
 				date: this.deadline
 			}
+
 	  		if(this.titleValidate()){
-	    		this.$store.dispatch('editTask', task)
+	  			this.busy = true
+	    		await this.$store.dispatch('editTask', task)
+	  			this.busy = false
+	  			
 	    		this.$router.push('/')
 	    		
 	    		if(task.status !== 'completed')
@@ -101,17 +114,18 @@ export default {
     created(){
     	this.title = this.currentTask[0].title
 			this.description = this.currentTask[0].description
-			this.tags = this.currentTask[0].tags
+			this.tags = this.currentTask[0].tags || []
 			this.deadline = this.currentTask[0].date
 			this.status = this.currentTask[0].status
 			// this.id = this.currentTask[0].id
     },
     computed: {
     	currentTask(){
-	    	 return this.$store.getters.getTasks.filter( t => t.id === +this.$route.params.id)
+	    	 return this.$store.getters.getTasks.filter( t => t.id === this.$route.params.id)
 	    	 .map(t => {
 	    	  	return {
 	    	  		...t,
+	    	  		tags: !t.tags ? [] : t.tags,
 	    	  		status: new Date(t.date) > new Date() && t.status !== 'completed' ? 'active' :
 	    	  		t.status === 'completed' ? 'completed' : 'outdated'
 	    	  	}
@@ -129,8 +143,8 @@ export default {
 				&& this.status === this.currentTask[0].status
     	},
     	nameState() {
-        return this.title.length > 0 ? true : false
-      }
+        	return this.title.length > 0 ? true : false
+      	}
     },
     mixins: [toastsMixin]
   }

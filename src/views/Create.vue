@@ -93,6 +93,7 @@ export default {
     			tags: this.tags,
     			date: this.deadline
     		}
+        console.log(task.tags)
     		if(this.nameState && this.dateValidation && this.descriptionValid){
           this.busy = true
 	    		await this.$store.dispatch('createTask', task)
@@ -112,15 +113,6 @@ export default {
         // Return `true` if the date should be disabled
         return date < new Date()
       }
-      // makeToast(append = false) {
-      //   this.$root.$bvToast.toast(`"${this.title}"`, {
-      //     title: 'Добавлена задача',
-      //     autoHideDelay: 5000,
-      //     appendToast: append,
-      //     variant: "success"
-      //     // 'body-class': 'toast-body'
-      //   })
-      // }
     },
     mixins: [toastsMixin]
   // components: {
