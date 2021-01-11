@@ -41,7 +41,11 @@
 		  		<b-form-invalid-feedback id="example-datepicker-feedback">Необходимо указать дату окончания</b-form-invalid-feedback>
 		  		<!-- <p>Value: '{{ deadline }}'</p> -->
 		  	</div>
-  			<b-button type="submit" variant="success" class="mt-3">Создать Задачу</b-button>
+
+        <Loader :busy="busy">
+  			 <b-button type="submit" variant="success" class="mt-3">Создать Задачу</b-button>
+        </Loader>
+
         <b-button to="/" type="button" variant="secondary" class="mt-3 ml-3">Отмена</b-button>
   		</form>
     </div> <!-- col-6 -->
@@ -51,6 +55,7 @@
 <script>
 // @ is an alias to /src
 import toastsMixin from '@/mixins/toasts'
+import Loader from '@/components/Loader'
 
 export default {
   name: 'Create',
@@ -60,8 +65,12 @@ export default {
         description: '',
         tags: [],
         deadline: '',
-        descriptionMaxLength: 2048
+        descriptionMaxLength: 2048,
+        busy: false
       }
+    },
+    components: {
+      Loader
     },
     computed: {
     	 nameState() {
@@ -75,7 +84,7 @@ export default {
       }
     },
     methods: {
-    	submit(){
+    	async submit(){
     		let task = {
     			title: this.title,
     			description: this.description,
@@ -85,8 +94,11 @@ export default {
     			date: this.deadline
     		}
     		if(this.nameState && this.dateValidation && this.descriptionValid){
-	    		this.$store.dispatch('createTask', task)
-	    		this.$router.push('/')
+          this.busy = true
+	    		await this.$store.dispatch('createTask', task)
+	    		this.busy = false
+
+          this.$router.push('/')
           this.makeToast(this.title, 'add')
     		}
     	},

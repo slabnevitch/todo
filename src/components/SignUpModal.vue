@@ -40,16 +40,9 @@
 		    </b-form-invalid-feedback>
       </b-form-group>
 
-      <b-overlay
-        :show="busy"
-        rounded
-        opacity="0.6"
-        spinner-small
-        spinner-variant="primary"
-        class="d-inline-block"
-      >
-        <b-button type="submit" size="sm" variant="success">Зарегистрироваться</b-button>
-      </b-overlay>
+      <Loader :busy="busy">
+        <b-button type="submit" size="sm" variant="success">Войти</b-button>
+      </Loader>
       
       <b-button class="ml-2" size="sm" variant="secondary" @click="cancelModal">Отмена</b-button>
 
@@ -58,6 +51,8 @@
 </template>
 
 <script>
+  import Loader from '@/components/Loader'
+
 	export default {
 		data(){
 			return {
@@ -69,6 +64,9 @@
         busy: false,
 			}
 		},
+    components: {
+      Loader
+    },
 		methods: {
       async onSubmit(event) {
         event.preventDefault()
