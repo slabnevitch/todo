@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <div><pre>{{error}}</pre></div>
     <Navbar :userState="getUserState.name"></Navbar>
     <b-container>
       <router-view/>

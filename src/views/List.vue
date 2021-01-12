@@ -1,6 +1,5 @@
 <template>
       <b-row>
-        <!-- <pre>{{tasks}}</pre> -->
         <b-col class="mt-5" v-if="!getUserState.isAuthorized" cols="12">
             <b-alert show variant="warning">Чтобы создавать и просматривать задачи, 
                 пожалуйста, <b-link v-b-modal.modalSignIn>войдите</b-link> или <b-link v-b-modal.modalSignUp>зарегистрируйтесь.</b-link>
@@ -10,7 +9,7 @@
 
         <b-col v-else cols="12">
             <b-row align-v="end" class="mb-3">
-              	<b-col md="6">
+              	<b-col md="6" class="mb-3">
                 	<h1 class="mt-50">Список задач</h1>
                 	<b-form-select v-model="selected" class="mb-3 mb-md-0">
                 		<!-- <template #first>
@@ -19,8 +18,21 @@
                         <b-form-select-option v-for="option in options" :key="option.value" :value="option.value">{{option.text}} ({{taskCounter(option.value)}})</b-form-select-option>
                 	</b-form-select>
               	</b-col>
-                <b-col md="6" class="d-flex justify-content-center justify-content-md-end">
+                <b-col md="6" class="d-flex justify-content-center justify-content-md-end mb-3">
                     <b-button to="/create" variant="success" size="lg">Добавить задачу</b-button>
+                    <b-button 
+                        v-b-tooltip.hover 
+                        title="Обновить список" 
+                        :disabled="preload" 
+                        class="ml-3" 
+                        variant="outline-dark" 
+                        size="lg" 
+                        @click="updateTasks">
+                            <b-icon 
+                                icon="arrow-repeat"  
+                                style="width: 20px; height: 20px; cursor:pointer">      
+                            </b-icon>
+                    </b-button>
                 </b-col>
                 
                 <div class="col-12">
@@ -81,14 +93,11 @@
 
                     </template>
                 </b-modal>
-                <!-- <p>{{getUserState.isAuthorized}}</p> -->
-                
 
                 <b-alert show v-if="tasks.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
                     <b-link to="/create">создать</b-link> задачу.
 
                 </b-alert>
-
 
                 <b-table v-else
                     stacked="lg"
@@ -96,8 +105,6 @@
                     :fields="fields" 
                     id="my-table"
                     :per-page="perPage"
-                    :sort-by.sync="sortBy"
-                    :sort-desc.sync="sortDesc"
                     :current-page="currentPage">
                         <template #cell(Название)="data">
                             <!-- {{data.value}} -->
@@ -163,7 +170,7 @@
 		name: "List",
 		data(){
 			return {
-                perPage: 3,
+                perPage: 5,
                 currentPage: 1,
                 taskStatusMessages,
                 sortBy: 'Окончание',
@@ -181,7 +188,7 @@
                     },
                     {
                         key: 'Окончание',
-                        sortable: true 
+                        sortable: false 
                     },
                     {
                         key: 'Описание',
@@ -211,6 +218,10 @@
 		},
 
 		methods: {
+            async updateTasks(){
+                this.$store.dispatch('resetPreloaderState', true)
+                await this.$store.dispatch('getTasks')
+            },
             taskCounter(status){
                  return this.statusedTasks.filter(task => !status ? true : task.status === status).length
             },
@@ -275,7 +286,7 @@
 				return this.$store.getters.getTasks
 			},
 			statusedTasks(){
-				return this.tasks.map(t => {
+				return this.dateFilteredTasks.map(t => {
                     return {
                         ...t,
                         status: new Date(t.date) > new Date() && t.status !== 'completed' ? 'active' :
@@ -285,6 +296,9 @@
 			},
             filteredTasks(){
                 return this.statusedTasks.filter(t => !this.selected ? true : t.status === this.selected)
+            },
+            dateFilteredTasks(){
+                return this.tasks.sort((a, b) => +new Date(a.date) - (+new Date(b.date)))
             },
             rows() {
                 return this.filteredTasks.length
@@ -310,14 +324,15 @@
             }
         },
         async created(){
+            this.$store.dispatch('getTasks')
             // this.tasks = []
-            const fetchedTasks = await this.$store.dispatch('getTasks')
+            // const fetchedTasks = await this.$store.dispatch('getTasks')
             // console.log(fetchedTasks)
             // this.tasks = fetchedTasks
         },
         destroyed(){
             console.log('list destroyed')
-            this.$store.dispatch('resetPreloaderState')
+            this.$store.dispatch('resetPreloaderState', true)
         },
         mixins: [toastsMixin]
 	}

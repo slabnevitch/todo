@@ -33,6 +33,7 @@ export default{
       // commit('createTask', task)
   	},
     async getTasks(ctx){
+      console.log('getTasks action id called')
       try{
         const uid = await ctx.dispatch('getUserId')
         const tasks = (await firebase.database().ref(`/users/${uid}/tasks`).once('value')).val() || {}
@@ -69,8 +70,8 @@ export default{
         throw e
       } 
     },
-    resetPreloaderState({commit}){
-      commit('setTaskPreloader', true)
+    resetPreloaderState({commit}, payload){
+      commit('setTaskPreloader', payload)
     }
   },
 
