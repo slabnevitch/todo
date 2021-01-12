@@ -2,7 +2,8 @@ import firebase from 'firebase/app';
 
 export default{
   state: {
-  	tasks: []
+  	tasks: [],
+    tasksPreloader: true
   },
   mutations: {
   	createTask(state, task){
@@ -13,8 +14,8 @@ export default{
     setTasks(state, tasks){
       state.tasks = tasks
     },
-    editTask(state, newTask){
-
+    setTaskPreloader(state, preloaderState){
+      state.tasksPreloader = preloaderState
     }
   },
   actions: {
@@ -37,6 +38,7 @@ export default{
         const tasks = (await firebase.database().ref(`/users/${uid}/tasks`).once('value')).val() || {}
         
         ctx.commit('setTasks', Object.keys(tasks).map((key) => ({...tasks[key], id: key})))
+        ctx.commit('setTaskPreloader', false)
         // console.log(Object.keys(tasks).map((key) => ({...tasks[key], id: key})))
         // return Object.keys(tasks).map((key) => ({...tasks[key], id: key}))
 
@@ -65,14 +67,17 @@ export default{
 
       }catch(e){
         throw e
-      }
-      
+      } 
+    },
+    resetPreloaderState({commit}){
+      commit('setTaskPreloader', true)
     }
   },
 
   getters: {
   	getTasks(state){
       return state.tasks
-  	}
+  	},
+    getPreloaderState: (state) => state.tasksPreloader
   }
 }

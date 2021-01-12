@@ -68,16 +68,17 @@
         if(this.passState && this.emailState){
           this.busy = true
           var loginResult = await this.$store.dispatch('login', user)
-          console.log(loginResult)
         }
+        if(loginResult){
+          console.log(user)
 
-        console.log(user)
+          this.form.email = ''
+          this.form.password = ''
+          this.$bvModal.hide('modalSignIn')
+          this.$messageToast('Выполнен вход в систему!') 
+        }
         this.busy = false
-
-        this.form.email = ''
-        this.form.password = ''
         
-        this.$bvModal.hide('modalSignIn')
       },
       validateEmail(email) {
 			    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

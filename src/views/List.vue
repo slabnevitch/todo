@@ -81,7 +81,7 @@
 
                     </template>
                 </b-modal>
-                <p>{{getUserState.isAuthorized}}</p>
+                <!-- <p>{{getUserState.isAuthorized}}</p> -->
                 
 
                 <b-alert show v-if="tasks.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
@@ -137,9 +137,7 @@
 
             	</b-table>
 
-                <b-overlay :show="!tasks.length > 0 && getUserState.isAuthorized" rounded="sm">
-
-                </b-overlay>
+                <b-overlay :show="preload" rounded="sm"></b-overlay>
                
                 <b-pagination
                     v-model="currentPage"
@@ -170,6 +168,7 @@
                 taskStatusMessages,
                 sortBy: 'Окончание',
                 sortDesc: false,
+                preload: true,
                 // tasks: [],
 				fields: [
                     // {
@@ -262,7 +261,16 @@
             }
 
 		},
+        watch: {
+            preloaderState(){
+                console.log('preloaderState is changed! ' + this.preloaderState)
+                this.preload = this.preloaderState
+            }
+        },
 		computed: {
+            preloaderState(){
+                return this.$store.getters.getPreloaderState
+            },
            tasks(){
 				return this.$store.getters.getTasks
 			},
@@ -309,6 +317,7 @@
         },
         destroyed(){
             console.log('list destroyed')
+            this.$store.dispatch('resetPreloaderState')
         },
         mixins: [toastsMixin]
 	}

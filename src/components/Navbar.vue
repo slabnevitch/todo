@@ -54,6 +54,7 @@ export default {
          
          if(modalConfirm){
            await this.$store.dispatch('logout')
+           this.$messageToast('Выполнен выход из системы')
           }
       }catch(e){
         

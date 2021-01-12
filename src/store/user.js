@@ -47,8 +47,10 @@ export default{
       try{
         await firebase.auth().signInWithEmailAndPassword(email, password)
         // dispatch('fetchName')
+        return true
       } catch(e){
         commit('setError', e) //commit - Запуск мутации.
+        return false
         throw e //пробрасываем ошибку дальше из промиса
         // console.error(e)
       }
@@ -67,11 +69,10 @@ export default{
           name: name,
           tasks: {}
         })//`users/${uid}/info` - путь до базы данных, создаваемой для пользователя 
-          console.log('try in register')
-          // dispatch('fetchName')
+          return true
         } catch(e){
-          console.log('catch in register')
-          // commit('setError', e) //commit - Запуск мутации.
+          commit('setError', e) //commit - Запуск мутации.
+          return false
           throw e
         }
     },
