@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div><pre>{{error}}</pre></div>
     <Navbar :userState="getUserState.name"></Navbar>
     <b-container>
       <router-view/>
@@ -13,7 +14,14 @@
   import Navbar from '@/components/Navbar'
   import SignUpModal from '@/components/SignUpModal'
   import SignInModal from '@/components/SignInModal'
+  import messages from '@/utils/messages'
+  
   export default {
+    data(){
+      return {
+        error: ''
+      }
+    },
     components: {
       Navbar,
       SignUpModal,
@@ -22,6 +30,17 @@
     computed: {
       getUserState(){
         return this.$store.getters.getUser
+      },
+      dbError(){
+        return this.$store.getters.getError
+      }
+    },
+    watch: {
+      dbError(){
+        // console.log('error in watcher!')
+        let errText = messages[this.$store.getters.getError.code]
+
+        this.$errorToast(errText)
       }
     }
   }

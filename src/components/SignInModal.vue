@@ -67,7 +67,8 @@
 
         if(this.passState && this.emailState){
           this.busy = true
-          await this.$store.dispatch('login', user)
+          var loginResult = await this.$store.dispatch('login', user)
+          console.log(loginResult)
         }
 
         console.log(user)

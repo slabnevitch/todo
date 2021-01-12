@@ -31,6 +31,21 @@ Vue.config.productionTip = false
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
+
+let app
+
+// firebase.auth().onAuthStateChanged(() => {//ф-ция, срабатывает неоднократно, чтобы каждый раз не перезапускать Вью
+// //делаем проверку на существование переменой 
+//   if(!app){
+//     app = new Vue({
+//       router,
+//       store,
+//       render: h => h(App)
+//     }).$mount('#app')
+    
+//   }
+// })
+
 new Vue({
   router,
   store,
@@ -39,7 +54,7 @@ new Vue({
   	firebase.auth().onAuthStateChanged(function(user) {//проверка авторизован в данный момент юзер или нет 
 	 	 _self.$store.dispatch('userStateChange', user)
 	})
-    // this.$store.dispatch('loadBooks')
+    this.$store.dispatch('getTasks')
   },
   render: h => h(App)
 }).$mount('#app')

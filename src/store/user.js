@@ -8,7 +8,8 @@ export default{
       isAuthorized: false,
       uid: null,
       name: ''
-    }
+    },
+    error: null
   },
   mutations: {
   	setUser(state, uid){
@@ -25,6 +26,10 @@ export default{
     clearUser(state){
       state.user.name = null
       state.user.uid = null
+    },
+    setError(state, payload){
+      console.log('setError is called')
+      state.error = payload
     }
   },
   actions: {
@@ -43,7 +48,7 @@ export default{
         await firebase.auth().signInWithEmailAndPassword(email, password)
         // dispatch('fetchName')
       } catch(e){
-        // commit('setError', e) //commit - Запуск мутации.
+        commit('setError', e) //commit - Запуск мутации.
         throw e //пробрасываем ошибку дальше из промиса
         // console.error(e)
       }
@@ -80,7 +85,6 @@ export default{
         const uid = await ctx.dispatch('getUserId')
         const info = (await firebase.database().ref(`/users/${uid}/name`).once('value')).val()
         ctx.commit('setUsername', info)
-        console.log(info)
 
       }catch(e){
         console.log(e)
@@ -91,6 +95,7 @@ export default{
   getters: {
   	getUser(state){
       return state.user
-    }
+    },
+    getError: (state) => state.error
   }
 }

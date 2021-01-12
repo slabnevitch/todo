@@ -20,18 +20,13 @@ export default{
   actions: {
   	async createTask({commit, dispatch}, task){
       try{
-        // task.tags ? task.tags = {...task.tags} : {}
-          console.log(task.tags)
-        
         const uid = await dispatch('getUserId')
           const pushedTask = await firebase.database().ref(`users/${uid}/tasks`).push(task) //если в базе данных нет поля categories оно будет создано
           //firebase вернет категорию, в нем будет поле key
-          console.log(pushedTask.key)
-          return pushedTask.key//возвращаем категорию с выдп=анным 'key', присвоив его полю id
+          return pushedTask.key//возвращаем task с выдп=анным 'key', присвоив его полю id
 
       }catch(e){
         // ctx.commit('setError', e)
-        console.log(e)
         throw e
       }
       // commit('createTask', task)
@@ -39,7 +34,6 @@ export default{
     async getTasks(ctx){
       try{
         const uid = await ctx.dispatch('getUserId')
-        console.log('getTasks ' + uid)
         const tasks = (await firebase.database().ref(`/users/${uid}/tasks`).once('value')).val() || {}
         
         ctx.commit('setTasks', Object.keys(tasks).map((key) => ({...tasks[key], id: key})))
@@ -47,7 +41,6 @@ export default{
         // return Object.keys(tasks).map((key) => ({...tasks[key], id: key}))
 
       }catch(e){
-         console.log(e)
         // ctx.commit('setError', e)
         throw e
       }
@@ -68,11 +61,10 @@ export default{
       try{
          const uid = await dispatch('getUserId')
           const removedTask = await firebase.database().ref(`users/${uid}/tasks`).child(payload).remove()
-          console.log(removedTask)
           dispatch('getTasks')
 
       }catch(e){
-        console.log(e)
+        throw e
       }
       
     }

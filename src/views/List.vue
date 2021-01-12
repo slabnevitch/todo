@@ -84,7 +84,7 @@
                 <p>{{getUserState.isAuthorized}}</p>
                 
 
-                <b-alert show v-if="items.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
+                <b-alert show v-if="tasks.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
                     <b-link to="/create">создать</b-link> задачу.
 
                 </b-alert>
@@ -213,8 +213,7 @@
 
 		methods: {
             taskCounter(status){
-                console.log(status)
-                return this.statusedTasks.filter(task => !status ? true : task.status === status).length
+                 return this.statusedTasks.filter(task => !status ? true : task.status === status).length
             },
             formatedDeadline(deadline){
                 var b = moment(new Date());//now
@@ -240,7 +239,6 @@
                 }
             },
             removeTask(id){
-                console.log(id)
                 const title = this.$store.getters.getTasks.find(t => t.id === id).title
                 this.$store.dispatch('removeTask', id)
                 this.makeToast(title, 'remove')
@@ -251,8 +249,7 @@
                     cancelTitle: 'Отмена',
                 })
                   .then(value => {
-                    console.log(value)
-                      if(value){
+                          if(value){
                         this.removeTask(id)
                       }
                   })
