@@ -76,14 +76,17 @@
             </template>
         </b-modal>
 
-        <b-table 
+        <b-alert show v-if="tasks.length == 0" variant="warning">В списке пока еще нет задач. Вы можете
+            <b-link to="/create">создать</b-link> задачу.
+
+        </b-alert>
+
+        <b-table v-else
             stacked="lg"
             :items="items"
             :fields="fields" 
             id="my-table"
             :per-page="perPage"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
             :current-page="currentPage">
                 <template #cell(Название)="data">
                     <!-- {{data.value}} -->
@@ -144,11 +147,9 @@
 		name: "List",
 		data(){
 			return {
-                perPage: 3,
+                perPage: 4,
                 currentPage: 1,
                 taskStatusMessages,
-                sortBy: 'Окончание',
-                sortDesc: false,
 				fields: [
                     // {
                     //     key:'№',
@@ -160,7 +161,7 @@
                     },
                     {
                         key: 'Окончание',
-                        sortable: true 
+                        sortable: false
                     },
                     {
                         key: 'Описание',
@@ -245,7 +246,7 @@
 				return this.$store.getters.getTasks
 			},
 			statusedTasks(){
-				return this.tasks.map(t => {
+				return this.dateFilteredTasks.map(t => {
                     return {
                         ...t,
                         status: new Date(t.date) > new Date() && t.status !== 'completed' ? 'active' :
@@ -255,6 +256,9 @@
 			},
             filteredTasks(){
                 return this.statusedTasks.filter(t => !this.selected ? true : t.status === this.selected)
+            },
+            dateFilteredTasks(){
+                return this.tasks.sort((a, b) => +new Date(a.date) - (+new Date(b.date)))
             },
             rows() {
                 return this.filteredTasks.length

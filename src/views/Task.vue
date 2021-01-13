@@ -1,8 +1,15 @@
 <template>
   <div class="row">
   	<div class="col-12">
-  		<b-jumbotron :header="currentTask[0].title" :lead="currentTask[0].description">
-   			<h4>Состояние <b-badge :variant="taskStatusMessages[currentTask[0].status].selector">{{taskStatusMessages[currentTask[0].status].name}}</b-badge></h4>
+  		<h2 class="mt-4 mb-3">Редактирование задачи</h2>
+  		<hr>
+  	</div>
+  	<div class="col-12">
+  		<b-jumbotron>
+			<h1>{{currentTask[0].title}}</h1>
+			<p>{{currentTask[0].description}}</p>
+			<h4>Состояние <b-badge :variant="taskStatusMessages[currentTask[0].status].selector">{{taskStatusMessages[currentTask[0].status].name}}</b-badge></h4>
+ 			
   		</b-jumbotron>
   	</div>
 	   <div class="col-md-6">
