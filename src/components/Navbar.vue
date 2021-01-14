@@ -2,35 +2,27 @@
   <b-navbar toggleable="lg" type="dark" variant="info">
     <b-navbar-brand to="/">Список задач</b-navbar-brand>
 
-    <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
-      <b-navbar-nav>
-        <li class="nav-item">
-          <router-link to="/create" class="nav-link" exact>Создать задачу</router-link> 
-        </li>
-        <li class="nav-item">
-          <router-link to="/" class="nav-link">Список</router-link>
-        </li>
+      <b-navbar-nav v-if="!getUserInfo.isAuthorized" class="ml-auto">
+        <b-nav-item v-b-modal.modalSignIn>Войти</b-nav-item>
+        <b-nav-item v-b-modal.modalSignUp>Зарегистрироваться</b-nav-item>
       </b-navbar-nav>
     
-    </b-collapse> -->
-    <b-navbar-nav v-if="!getUserInfo.isAuthorized" class="ml-auto">
-      <b-nav-item v-b-modal.modalSignIn>Войти</b-nav-item>
-      <b-nav-item v-b-modal.modalSignUp>Зарегистрироваться</b-nav-item>
-    </b-navbar-nav>
+      <b-navbar-nav v-else class="ml-auto">
+        <b-nav-item-dropdown right>
+          <!-- Using 'button-content' slot -->
+          <template #button-content>
+            <b-icon-person-fill></b-icon-person-fill>
+            <span class="ml-1">{{getUserInfo.name}}</span>
+          </template>
+          <b-dropdown-item @click="signOutConfirm">Выйти</b-dropdown-item>
+        </b-nav-item-dropdown>
+        
+      </b-navbar-nav>
+    </b-collapse>
 
-    <b-navbar-nav v-else class="ml-auto">
-      <b-nav-item-dropdown right>
-        <!-- Using 'button-content' slot -->
-        <template #button-content>
-          <b-icon-person-fill></b-icon-person-fill>
-          <span class="ml-1">{{getUserInfo.name}}</span>
-        </template>
-        <b-dropdown-item @click="signOutConfirm">Выйти</b-dropdown-item>
-      </b-nav-item-dropdown>
-      
-    </b-navbar-nav>
   </b-navbar>
   
 
@@ -86,4 +78,21 @@ export default {
   .router-link-active{
       color: rgba(255, 255, 255, 0.75);
   }
+  // .navbar-nav{
+  //   flex-direction: row;
+  // }
+  // .navbar-nav .nav-link {
+  //   padding-right: 0.5rem;
+  //   padding-left: 0.5rem;
+  // }
+  // @media (min-width: 576px){
+
+  //   .navbar-expand-lg .navbar-nav {
+  //       flex-direction: row;
+  //   }
+  //   .navbar-expand-lg .navbar-nav .nav-link {
+  //   padding-right: 0.5rem;
+  //   padding-left: 0.5rem;
+  //   }
+  // }
 </style>
